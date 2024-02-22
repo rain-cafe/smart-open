@@ -6,38 +6,23 @@
 
 ### Installation
 
-_TODO_
+See [Releases](https://github.com/rain-cafe/smart-open/releases/latest)
 
 ### Example Usage
 
 ```sh
-# ############ #
-# File Browser #
-# ############ #
+$ smart-open --help
 
-# Inside of a regular directory
-$ so # Opens native file explorer at the current directory
+smart-open - an intelligent and pluggable version of open
 
-# Specifying a sub directory
-$ so ./src # Opens native file explorer at the current directory
+Usage:
 
-# ################ #
-# Git Repositories #
-# ################ #
+smart-open                       opens a browser at the git repo if one is present, otherwise opens the file explorer
+smart-open https://rains.cafe    opens a browser at https://rains.cafe
+smart-open rains.cafe            opens a browser at https://rains.cafe
+smart-open /home                 opens the file explorer at /home
 
-# Inside a git repo (smart-open in this example)
-$ so # Default Browser: https://github.com/rain-cafe/smart-open
+Configs:
 
-# #### #
-# URLs #
-# #### #
-
-# With a simplified url
-$ so rains.cafe # Default Browser: https://rains.cafe
-
-# With a fully qualified url
-$ so https://rains.cafe # Default Browser: https://rains.cafe
-
-# With a deep url
-$ so https://github.com/rain-cafe/smart-open # Default Browser: https://github.com/rain-cafe/smart-open
+Update the config located at /home/ceci/.config/smart-open.json
 ```
