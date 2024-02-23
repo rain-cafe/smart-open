@@ -50,7 +50,7 @@ jobs:
     - name: Build
       run: cargo build -r --target ${{ matrix.target }} --locked
 
-    - name: Build Deb
+    - name: Build Deb (linux)
       if: matrix.build == 'linux'
       run: |
         cargo install cargo-deb
