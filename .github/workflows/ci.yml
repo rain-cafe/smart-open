@@ -30,16 +30,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v4
-
-    - name: Debug (windows)
-      if: matrix.build == 'windows'
-      shell: bash
-      run: |
-        which git
-        which cargo
-        echo $PATH
-        echo $GITHUB_PATH
-
     - name: Install dependencies (linux only)
       if: matrix.build == 'linux'
       run: |
@@ -52,11 +42,10 @@ jobs:
         targets: ${{ matrix.target }}
 
     - name: Run Tests
-      shell: bash
       run: cargo test --locked
 
     - name: Build
-      run: cargo build -r --target ${{ matrix.target }} --frozen
+      run: cargo build -r --target ${{ matrix.target }} --locked
 
     - name: Rename Binaries (linux / macos)
       if: matrix.build != 'windows'
