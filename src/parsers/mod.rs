@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::fs;
 
 pub mod git;
 pub mod file;
@@ -30,11 +30,17 @@ pub struct ParseOptions {
     pub uri_as_path: Option<String>,
 }
 
+impl ParseOptions {
+    fn from(uri: &String) -> ParseOptions {
+        ParseOptions {
+            uri: uri.clone(),
+            uri_as_path: if let Ok(absolute) = fs::canonicalize(&uri) { Some(absolute.to_str().unwrap().to_owned()) } else { None },
+        }
+    }
+}
+
 pub async fn parse(uri: &String, parsers: &Vec<String>) -> Option<String> {
-    let options = ParseOptions {
-        uri: uri.clone(),
-        uri_as_path: if let Ok(absolute) = fs::canonicalize(PathBuf::from(&uri)) { Some(absolute.to_str().unwrap().to_owned()) } else { None },
-    };
+    let options = ParseOptions::from(uri);
 
     for parser in parsers.iter() {
         let name = ParserName::from_str(&parser);
@@ -51,4 +57,18 @@ pub async fn parse(uri: &String, parsers: &Vec<String>) -> Option<String> {
     }
 
     return None;
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{env, fs};
+
+    use crate::parsers::ParseOptions;
+
+    #[test]
+    fn parse_options_from_should_create_options() {
+        let options = ParseOptions::from(&String::from("."));
+        assert_eq!(options.uri, ".");
+        assert_eq!(options.uri_as_path, Some(fs::canonicalize(env::current_dir().unwrap().to_str().unwrap().to_string()).unwrap().to_str().unwrap().to_string()));
+    }
 }
