@@ -50,6 +50,12 @@ jobs:
     - name: Build
       run: cargo build -r --target ${{ matrix.target }} --locked
 
+    - name: Build Deb
+      if: matrix.build == 'linux'
+      run: |
+        cargo install cargo-deb
+        cargo deb -o smart-open.deb
+
     - name: Rename Binaries (linux / macos)
       if: matrix.build != 'windows'
       run: mv target/${{ matrix.target }}/release/smart-open target/${{ matrix.target }}/release/smart-open-${{ matrix.target }}
@@ -60,6 +66,7 @@ jobs:
         path: |
           target/${{ matrix.target }}/release/smart-open.exe
           target/${{ matrix.target }}/release/smart-open-${{ matrix.target }}
+          smart-open.deb
 
     - name: Upload the binaries
       uses: softprops/action-gh-release@v1
@@ -68,3 +75,4 @@ jobs:
         files: |
           target/${{ matrix.target }}/release/smart-open.exe
           target/${{ matrix.target }}/release/smart-open-${{ matrix.target }}
+          smart-open.deb
