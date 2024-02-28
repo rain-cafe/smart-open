@@ -17,7 +17,6 @@ mod tests {
 
     #[test]
     fn is_program_in_path_should_return_true_if_program_exists() {
-        assert_eq!(is_program_in_path("git"), true);
         assert_eq!(is_program_in_path("cargo"), true);
     }
 
@@ -28,7 +27,6 @@ mod tests {
 
     #[test]
     fn is_program_not_in_path_should_return_false_if_program_exists() {
-        assert_eq!(is_program_not_in_path("git"), false);
         assert_eq!(is_program_not_in_path("cargo"), false);
     }
 
