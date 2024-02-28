@@ -18,7 +18,7 @@ mod tests {
 
     #[tokio::test]
     async fn validate_http_url_should_return_true_for_valid_urls() {
-        assert_eq!(validate_http_url("https://google.com").await, true);
+        assert_eq!(validate_http_url("https://1.1.1.1").await, true);
     }
 
     #[tokio::test]

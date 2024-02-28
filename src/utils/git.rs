@@ -1,5 +1,6 @@
+use std::io::Result;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::{Command, Stdio, Output};
 use std::str;
 
 use log::error;
@@ -10,18 +11,40 @@ pub struct Remote {
     pub url: String,
 }
 
+fn is_git_dir(dir: &str) -> bool {
+    return Path::new(&dir).join(".git").exists();
+}
+
+fn exec(dir: &str, args: Vec<&str>) -> Result<Output> {
+    let mut command = Command::new("git");
+    
+    for arg in args.iter() {
+        command.arg(arg);
+    }
+
+    match command.current_dir(&dir).stdout(Stdio::piped()).spawn() {
+        Ok(child) => {
+            return child.wait_with_output();
+        },
+        Err(e) => {
+            error!("Failed to run git!");
+            return Err(e);
+        },
+    };
+}
+
 pub fn get_remotes(dir: &str) -> Vec<Remote> {
-    if !Path::new(&dir).join(".git").exists() {
+    if !is_git_dir(&dir) {
         return vec![];
     }
 
-    let output = match Command::new("git").current_dir(&dir).arg("remote").arg("-v").stdout(Stdio::piped()).spawn() {
-        Ok(child) => child.wait_with_output().map_or(None, |x| Some(x)),
-        Err(_) => {
-            error!("Failed to run git!");
-            return vec![];
-        }, 
-    }.unwrap();
+    let output = exec(&dir, vec!["remote", "-v"]);
+
+    if output.is_err() {
+        return vec![];
+    }
+
+    let output = output.unwrap();
     
     let remotes = str::from_utf8(&output.stdout).unwrap();
 
@@ -50,11 +73,16 @@ pub fn get_remotes(dir: &str) -> Vec<Remote> {
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::git::get_remotes;
+    use crate::utils::git::{exec, get_remotes};
 
     #[test]
     fn get_remotes_should_return_the_remotes() {
-        assert_eq!(get_remotes(".").len(), 1);
+        exec(".", vec!["init", ".test-git"]).expect("Failed to initialize git directory");
+        exec(".test-git", vec!["remote", "add", "origin", "git@github.com:rain-cafe/smart-open.git"]).expect("Failed to initialize git directory");
+
+        // I hate this, but NixOS does shenanigans to the git directory
+        // Ideally we should setup a test git directory
+        assert_eq!(get_remotes(".test-git").len(), 1);
     }
 
     #[test]
