@@ -3,7 +3,7 @@ name = "smart-open"
 description = "an intelligent and pluggable version of open"
 license = "MIT OR Apache-2.0"
 authors = ["Cecilia Sanare <ceci@sanare.dev>"]
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 
 [dependencies]
